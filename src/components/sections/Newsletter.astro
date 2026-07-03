@@ -1,0 +1,43 @@
+---
+import { ui, defaultLang } from "@/i18n/ui"
+const t = ui[defaultLang]
+---
+
+<section class="bg-cream py-24 lg:py-32">
+  <div class="mx-auto max-w-2xl px-6 text-center">
+    <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
+      {t["newsletter.kicker"]}
+    </p>
+    <h2 class="font-serif text-4xl text-balance text-wine lg:text-5xl" data-reveal style="--reveal-delay:100ms">
+      {t["newsletter.title"]}
+    </h2>
+    <p class="mx-auto mt-5 max-w-md text-base font-light leading-relaxed text-pretty text-ink-soft" data-reveal style="--reveal-delay:200ms">
+      {t["newsletter.body"]}
+    </p>
+
+    <!-- Placeholder: da collegare a Brevo / MailerLite -->
+    <form
+      class="mx-auto mt-10 flex max-w-md flex-col gap-3 sm:flex-row"
+      action="#"
+      method="post"
+      data-reveal
+      style="--reveal-delay:300ms"
+    >
+      <label for="newsletter-email" class="sr-only">{t["newsletter.placeholder"]}</label>
+      <input
+        id="newsletter-email"
+        type="email"
+        name="email"
+        required
+        placeholder={t["newsletter.placeholder"]}
+        class="w-full rounded-full border border-wine/20 bg-cream px-6 py-3 text-sm text-ink transition-shadow duration-300 placeholder:text-ink-soft/60 focus:border-gold focus:shadow-[0_0_0_3px_rgba(199,154,62,0.25)] focus:outline-none"
+      />
+      <button
+        type="submit"
+        class="btn-shimmer rounded-full bg-wine px-8 py-3 text-sm font-medium tracking-widest text-cream uppercase hover:bg-wine-deep"
+      >
+        {t["newsletter.cta"]}
+      </button>
+    </form>
+  </div>
+</section>

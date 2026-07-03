@@ -1,0 +1,76 @@
+---
+import { ui, defaultLang } from "@/i18n/ui"
+const t = ui[defaultLang]
+---
+
+<section class="relative flex min-h-screen items-center justify-center overflow-hidden">
+  <!-- Immagine a tutto schermo con effetto Ken Burns -->
+  <img
+    src="/images/hero-vigneti.png"
+    alt="Vigneti della Valpolicella al tramonto"
+    class="ken-burns absolute inset-0 h-full w-full object-cover"
+    fetchpriority="high"
+  />
+
+  <!-- Velatura per leggibilità (respira lentamente) -->
+  <div
+    class="gradient-drift absolute inset-0 bg-gradient-to-b from-wine-deep/60 via-wine-deep/30 to-wine-deep/75"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Bagliore dorato radiale -->
+  <div
+    class="pointer-events-none absolute inset-0 opacity-60 [background:radial-gradient(ellipse_at_center,transparent_45%,rgba(53,8,16,0.55)_100%)]"
+    aria-hidden="true"
+  >
+  </div>
+
+  <!-- Contenuto -->
+  <div class="relative z-10 mx-auto max-w-3xl px-6 text-center text-cream">
+    <p
+      class="mb-6 animate-[fade-in_1s_ease_forwards] text-xs font-medium tracking-[0.4em] text-gold-soft uppercase opacity-0 [animation-delay:200ms]"
+    >
+      {t["hero.kicker"]}
+    </p>
+    <h1
+      class="animate-[fade-in_1.1s_ease_forwards] font-serif text-4xl leading-tight text-balance opacity-0 [animation-delay:450ms] sm:text-5xl lg:text-6xl"
+    >
+      {t["hero.title"]}
+    </h1>
+    <p
+      class="mx-auto mt-6 max-w-xl animate-[fade-in_1.1s_ease_forwards] text-base font-light leading-relaxed text-pretty text-cream/85 opacity-0 [animation-delay:750ms] sm:text-lg"
+    >
+      {t["hero.subtitle"]}
+    </p>
+
+    <div
+      class="mt-10 flex animate-[fade-in_1.1s_ease_forwards] flex-col items-center justify-center gap-4 opacity-0 [animation-delay:1000ms] sm:flex-row"
+    >
+      <a
+        href="/vini"
+        class="btn-shimmer w-full rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-widest text-wine-deep uppercase hover:bg-red-soft sm:w-auto"
+      >
+        {t["hero.cta.wines"]}
+      </a>
+      <a
+        href="/prenota"
+        class="btn-outline-fill w-full rounded-full border border-cream/50 px-8 py-3 text-sm font-medium tracking-widest text-cream uppercase hover:bg-cream hover:text-wine-deep sm:w-auto"
+      >
+        {t["hero.cta.booking"]}
+      </a>
+    </div>
+  </div>
+
+  <!-- Indicatore scroll fluttuante -->
+  <div
+    class="absolute bottom-8 left-1/2 z-10 -translate-x-1/2 animate-[fade-in_1s_ease_forwards] text-cream/70 opacity-0 [animation-delay:1300ms]"
+    aria-hidden="true"
+  >
+    <div class="float-y">
+      <svg class="h-6 w-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M12 5v14M6 13l6 6 6-6" />
+      </svg>
+    </div>
+  </div>
+</section>

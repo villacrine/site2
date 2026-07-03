@@ -1,0 +1,71 @@
+---
+import { ui, defaultLang } from "@/i18n/ui"
+const t = ui[defaultLang]
+
+// Placeholder — in produzione da Sanity
+const reviews = [
+  {
+    quote:
+      "Un Amarone di rara eleganza: profondo, avvolgente e mai eccessivo. L'espressione più autentica della Valpolicella.",
+    author: "Guida Vini d'Italia",
+    stars: 5,
+  },
+  {
+    quote:
+      "Visita in cantina indimenticabile. La passione della famiglia si sente in ogni bottiglia.",
+    author: "Martina R.",
+    stars: 5,
+  },
+  {
+    quote:
+      "Il Ripasso è un piccolo capolavoro artigianale. Torneremo sicuramente per la vendemmia.",
+    author: "Thomas K.",
+    stars: 5,
+  },
+]
+---
+
+<section class="bg-wine py-24 text-cream lg:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <div class="mb-16 text-center">
+      <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold-soft uppercase" data-reveal>
+        {t["reviews.kicker"]}
+      </p>
+      <h2 class="font-serif text-4xl text-balance lg:text-5xl" data-reveal style="--reveal-delay:100ms">
+        {t["reviews.title"]}
+      </h2>
+    </div>
+
+    <div class="grid gap-8 md:grid-cols-3">
+      {
+        reviews.map((review, i) => (
+          <figure
+            data-reveal
+            style={`--reveal-delay:${i * 150}ms`}
+            class="card-lift flex h-full flex-col justify-between rounded-sm border border-cream/15 bg-wine-deep/40 p-8 transition-colors duration-500 hover:border-gold/40"
+          >
+            <div class="mb-5 flex gap-1 text-gold-soft" aria-label={`Valutazione ${review.stars} su 5`}>
+              {Array.from({ length: review.stars }).map((_, s) => (
+                <svg
+                  class="h-4 w-4 transition-transform duration-300 hover:scale-125"
+                  style={`transition-delay:${s * 40}ms`}
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                >
+                  <path d="M12 2l2.9 6.3 6.9.7-5.1 4.7 1.4 6.8L12 17.8 5.9 20.5l1.4-6.8L2.2 9l6.9-.7L12 2z" />
+                </svg>
+              ))}
+            </div>
+            <blockquote class="font-serif text-xl leading-relaxed text-pretty text-cream/95">
+              &ldquo;{review.quote}&rdquo;
+            </blockquote>
+            <figcaption class="mt-6 text-xs font-medium tracking-widest text-gold-soft uppercase">
+              {review.author}
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+  </div>
+</section>

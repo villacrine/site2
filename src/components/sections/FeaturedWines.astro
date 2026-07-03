@@ -1,0 +1,97 @@
+---
+import { ui, defaultLang } from "@/i18n/ui"
+const t = ui[defaultLang]
+
+// Dati placeholder — in produzione verranno da Sanity (localizzati per campo)
+const wines = [
+  {
+    name: "Amarone della Valpolicella",
+    classification: "DOCG",
+    year: "2019",
+    note: "Riserva",
+    image: "/images/vino-amarone.png",
+    span: "lg:row-span-2",
+  },
+  {
+    name: "Valpolicella Ripasso",
+    classification: "DOC Superiore",
+    year: "2021",
+    note: "Elegante",
+    image: "/images/valpolicella-ripasso.jpg",
+    span: "",
+  },
+  {
+    name: "Recioto della Valpolicella",
+    classification: "DOCG",
+    year: "2020",
+    note: "Passito",
+    image: "/images/vino-amarone.png",
+    span: "",
+  },
+]
+---
+
+<section class="bg-cream py-24 lg:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <!-- Intestazione -->
+    <div class="mb-16 max-w-2xl">
+      <p class="mb-4 flex items-center gap-3 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
+        <span class="rule-gold"></span>
+        {t["wines.kicker"]}
+      </p>
+      <h2 class="font-serif text-4xl text-balance text-wine lg:text-5xl" data-reveal style="--reveal-delay:100ms">
+        {t["wines.title"]}
+      </h2>
+      <p class="mt-5 text-base font-light leading-relaxed text-pretty text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        {t["wines.subtitle"]}
+      </p>
+    </div>
+
+    <!-- Griglia asimmetrica -->
+    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:grid-rows-2">
+      {
+        wines.map((wine, i) => (
+          <a
+            href="/vini"
+            data-reveal="zoom"
+            style={`--reveal-delay:${i * 140}ms`}
+            class={`group card-lift relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-sm bg-wine-deep ${wine.span}`}
+          >
+            <img
+              src={wine.image}
+              alt={`Bottiglia di ${wine.name}`}
+              class="absolute inset-0 h-full w-full object-cover opacity-80 transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-100"
+              loading="lazy"
+            />
+            <div
+              class="absolute inset-0 bg-gradient-to-t from-wine-deep/90 via-wine-deep/20 to-transparent transition-opacity duration-500 group-hover:from-wine-deep/95"
+              aria-hidden="true"
+            />
+            <div class="relative z-10 p-6 text-cream transition-transform duration-500 group-hover:-translate-y-1">
+              <span class="text-[0.65rem] font-medium tracking-[0.3em] text-gold-soft uppercase">
+                {wine.classification} · {wine.year}
+              </span>
+              <h3 class="mt-2 font-serif text-2xl leading-tight">{wine.name}</h3>
+              <span class="mt-1 block text-sm font-light text-cream/70">{wine.note}</span>
+              <span class="mt-4 flex items-center gap-2 text-[0.7rem] font-medium tracking-widest text-gold-soft uppercase opacity-0 transition-all duration-500 group-hover:opacity-100">
+                {t["wines.discover"]}
+                <svg class="h-3.5 w-3.5 -translate-x-1 transition-transform duration-500 group-hover:translate-x-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+
+    <div class="mt-14 text-center" data-reveal>
+      <a
+        href="/vini"
+        class="link-underline text-sm font-medium tracking-widest text-wine uppercase"
+      >
+        {t["wines.cta"]}
+      </a>
+    </div>
+  </div>
+</section>

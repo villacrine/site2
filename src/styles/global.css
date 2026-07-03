@@ -1,0 +1,343 @@
+@import "tailwindcss";
+
+/* =========================================================
+   VILLA CRINE — Design System "Luxury Minimal / Artisan"
+   Palette: crema/pietra calda • bordeaux/vino • oro/bronzo
+   Tipografia: Cormorant Garamond (serif) + Inter (sans)
+   ========================================================= */
+
+@theme {
+  /* Font families (caricati via <link> Google Fonts nel Layout) */
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+
+  /* Neutri caldi (crema / pietra) */
+  --color-cream: #faf7f2;
+  --color-sand: #f2ece1;
+  --color-stone-warm: #e7ded0;
+
+  /* Bordeaux / vino profondo */
+  --color-wine: #4a0d18;
+  --color-wine-deep: #350810;
+  --color-rose-deep: #7a2233;
+
+  /* Accento oro / bronzo */
+  --color-gold: #a9791c;
+  --color-gold-soft: #c79a3e;
+
+  /* Testo */
+  --color-ink: #2a211d;
+  --color-ink-soft: #6b5d54;
+
+  /* Animazioni riutilizzabili */
+  --animate-ken-burns: ken-burns 18s ease-out forwards;
+  --animate-float-y: float-y 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 3.5s linear infinite;
+  --animate-fade-in: fade-in 1s ease forwards;
+}
+
+/* Token semantici applicati al documento */
+:root {
+  --background: var(--color-cream);
+  --foreground: var(--color-ink);
+}
+
+html {
+  background-color: var(--background);
+  color: var(--foreground);
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, .font-display {
+  font-family: var(--font-serif);
+}
+
+/* =========================================================
+   KEYFRAMES
+   ========================================================= */
+@keyframes ken-burns {
+  0% {
+    transform: scale(1) translate3d(0, 0, 0);
+  }
+  100% {
+    transform: scale(1.12) translate3d(-1.5%, -1.5%, 0);
+  }
+}
+
+@keyframes float-y {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 250% 0;
+  }
+}
+
+@keyframes gradient-drift {
+  0%, 100% {
+    opacity: 0.85;
+    transform: translateY(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-2%);
+  }
+}
+
+@keyframes draw-line {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+/* =========================================================
+   SCROLL REVEAL (IntersectionObserver in Layout.astro)
+   ========================================================= */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  transition-delay: var(--reveal-delay, 0ms);
+  will-change: opacity, transform;
+}
+[data-reveal="left"] {
+  transform: translateX(-36px);
+}
+[data-reveal="right"] {
+  transform: translateX(36px);
+}
+[data-reveal="zoom"] {
+  transform: scale(0.94);
+}
+[data-reveal].is-visible {
+  opacity: 1;
+  transform: translate(0, 0) scale(1);
+}
+
+/* =========================================================
+   UTILITY / MICRO-INTERAZIONI
+   ========================================================= */
+
+/* Ken Burns per immagini hero */
+.ken-burns {
+  animation: var(--animate-ken-burns);
+}
+
+/* Overlay gradiente che "respira" */
+.gradient-drift {
+  animation: gradient-drift 12s ease-in-out infinite;
+}
+
+/* Sottolineatura animata sui link */
+.link-underline {
+  position: relative;
+}
+.link-underline::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 1px;
+  background-color: currentColor;
+  transition: width 0.35s ease;
+}
+.link-underline:hover::after {
+  width: 100%;
+}
+
+/* Linea decorativa oro (kicker) */
+.rule-gold {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1px;
+  background-color: var(--color-gold);
+  transform-origin: left;
+  animation: draw-line 0.9s ease forwards;
+  vertical-align: middle;
+}
+
+/* Bottone oro con effetto shimmer al passaggio */
+.btn-shimmer {
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease;
+}
+.btn-shimmer:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -12px rgba(169, 121, 28, 0.6);
+}
+.btn-shimmer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 20%,
+    rgba(255, 255, 255, 0.45) 50%,
+    transparent 80%
+  );
+  background-size: 200% 100%;
+  transform: translateX(-100%);
+  transition: transform 0.7s ease;
+}
+.btn-shimmer:hover::before {
+  transform: translateX(100%);
+}
+
+/* Bottone outline con riempimento animato */
+.btn-outline-fill {
+  transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.3s ease, color 0.3s ease;
+}
+.btn-outline-fill:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px -14px rgba(0, 0, 0, 0.4);
+}
+
+/* Card con sollevamento elegante */
+.card-lift {
+  transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+}
+.card-lift:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 60px -30px rgba(53, 8, 16, 0.55);
+}
+
+/* Indicatore scroll fluttuante */
+.float-y {
+  animation: var(--animate-float-y);
+}
+
+/* =========================================================
+   HEADER — entrata + transizione allo scroll
+   ========================================================= */
+.site-header {
+  transform: translateY(-100%);
+  opacity: 0;
+  animation: header-drop 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.15s forwards;
+  transition: background-color 0.5s ease, box-shadow 0.5s ease,
+    backdrop-filter 0.5s ease;
+}
+
+@keyframes header-drop {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Stato iniziale trasparente (sopra la hero scura): testo chiaro */
+.header-logo {
+  color: var(--color-cream);
+  transition: color 0.5s ease, transform 0.4s ease;
+}
+.header-logo:hover {
+  transform: translateY(-1px);
+}
+.header-sub {
+  color: color-mix(in srgb, var(--color-gold-soft) 90%, transparent);
+  transition: color 0.5s ease;
+}
+.header-link {
+  color: color-mix(in srgb, var(--color-cream) 90%, transparent);
+}
+.header-link:hover {
+  color: var(--color-cream);
+}
+.header-lang {
+  color: color-mix(in srgb, var(--color-cream) 70%, transparent);
+}
+.header-lang-active {
+  color: var(--color-cream);
+}
+.header-cta {
+  color: var(--color-cream);
+  border-color: color-mix(in srgb, var(--color-gold-soft) 60%, transparent);
+}
+.header-cta:hover {
+  background-color: var(--color-gold);
+  color: var(--color-wine-deep);
+}
+
+/* Stato "scrolled": sfondo crema + testo scuro */
+.site-header.is-scrolled {
+  background-color: color-mix(in srgb, var(--color-cream) 92%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px -18px rgba(53, 8, 16, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-wine) 12%, transparent);
+}
+.site-header.is-scrolled > div {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+.site-header.is-scrolled .header-logo,
+.site-header.is-scrolled .header-lang-active {
+  color: var(--color-wine);
+}
+.site-header.is-scrolled .header-sub {
+  color: color-mix(in srgb, var(--color-gold) 100%, transparent);
+}
+.site-header.is-scrolled .header-link {
+  color: color-mix(in srgb, var(--color-ink) 75%, transparent);
+}
+.site-header.is-scrolled .header-link:hover {
+  color: var(--color-wine);
+}
+.site-header.is-scrolled .header-lang {
+  color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+}
+.site-header.is-scrolled .header-cta {
+  color: var(--color-wine);
+  border-color: color-mix(in srgb, var(--color-wine) 40%, transparent);
+}
+.site-header.is-scrolled .header-cta:hover {
+  background-color: var(--color-wine);
+  color: var(--color-cream);
+}
+
+/* =========================================================
+   ACCESSIBILITÀ — riduci il movimento
+   ========================================================= */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
