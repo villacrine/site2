@@ -1,2 +1,5 @@
 # Sanity Studio SPA fallback
 /studio/* /studio/index.html 200
+
+# Sanity Studio static assets are emitted as /static/* during build.
+/static/* /studio/static/:splat 200
