@@ -1,0 +1,111 @@
+---
+interface Props {
+  url?: string
+}
+
+const {
+  url =
+    "https://calendly.com/villacrine-sito/degustazione-vini-classica-e-tour-della-cantina?primary_color=0a330f",
+} = Astro.props as Props
+---
+
+<script define:vars={{ url }}>
+  const calendlyCssHref = "https://assets.calendly.com/assets/external/widget.css"
+  const calendlyScriptSrc = "https://assets.calendly.com/assets/external/widget.js"
+  const triggerSelector = "[data-calendly-booking]"
+
+  let calendlyLoadPromise = null
+  let calendlyBoundAbortController = null
+
+  const getCalendly = () => {
+    return window.Calendly
+  }
+
+  const ensureCalendlyCss = () => {
+    const existingCss = document.querySelector('link[data-calendly-widget-css="true"]')
+    if (existingCss) return
+
+    const css = document.createElement("link")
+    css.rel = "stylesheet"
+    css.href = calendlyCssHref
+    css.dataset.calendlyWidgetCss = "true"
+    document.head.appendChild(css)
+  }
+
+  const ensureCalendlyScript = () => {
+    if (getCalendly()?.initPopupWidget) return Promise.resolve()
+    if (calendlyLoadPromise) return calendlyLoadPromise
+
+    calendlyLoadPromise = new Promise((resolve, reject) => {
+      const existingScript = document.querySelector('script[data-calendly-widget-script="true"]')
+
+      if (existingScript instanceof HTMLScriptElement) {
+        existingScript.addEventListener("load", () => resolve(), { once: true })
+        existingScript.addEventListener("error", () => reject(new Error("Calendly script failed to load")), {
+          once: true,
+        })
+        return
+      }
+
+      const script = document.createElement("script")
+      script.src = calendlyScriptSrc
+      script.async = true
+      script.dataset.calendlyWidgetScript = "true"
+      script.addEventListener("load", () => resolve(), { once: true })
+      script.addEventListener("error", () => reject(new Error("Calendly script failed to load")), {
+        once: true,
+      })
+      document.body.appendChild(script)
+    })
+
+    return calendlyLoadPromise
+  }
+
+  const openCalendly = async (fallbackHref) => {
+    try {
+      ensureCalendlyCss()
+      await ensureCalendlyScript()
+      const calendly = getCalendly()
+      if (calendly?.initPopupWidget) {
+        calendly.initPopupWidget({ url })
+        return
+      }
+    } catch {
+      // Falls back to href behavior if Calendly cannot load.
+    }
+
+    window.location.assign(fallbackHref)
+  }
+
+  const bindCalendlyTriggers = () => {
+    calendlyBoundAbortController?.abort()
+    const controller = new AbortController()
+    calendlyBoundAbortController = controller
+    const { signal } = controller
+
+    document.addEventListener(
+      "click",
+      (event) => {
+        if (!(event.target instanceof Element)) return
+        const trigger = event.target.closest(triggerSelector)
+        if (!(trigger instanceof HTMLAnchorElement)) return
+        if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+
+        event.preventDefault()
+        void openCalendly(trigger.href)
+      },
+      { signal },
+    )
+
+    document.addEventListener(
+      "astro:before-swap",
+      () => {
+        controller.abort()
+      },
+      { once: true, signal },
+    )
+  }
+
+  bindCalendlyTriggers()
+  document.addEventListener("astro:after-swap", bindCalendlyTriggers)
+</script>
