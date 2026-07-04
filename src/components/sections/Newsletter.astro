@@ -90,6 +90,8 @@ const t = await getUi(lang)
     const modal = root.querySelector("[data-newsletter-modal]")
     const closeButton = root.querySelector("[data-newsletter-modal-close]")
     const overlay = root.querySelector("[data-newsletter-modal-overlay]")
+    const submitButton = root.querySelector('#sib-form button[type="submit"]')
+    const brevoForm = root.querySelector("#sib-form")
 
     if (!(openButton instanceof HTMLButtonElement)) return
     if (!(modal instanceof HTMLElement)) return
@@ -129,6 +131,8 @@ const t = await getUi(lang)
     openButton.addEventListener("click", openModal, { signal })
     closeButton.addEventListener("click", closeModal, { signal })
     overlay.addEventListener("click", closeModal, { signal })
+    submitButton?.addEventListener("click", closeModal, { signal })
+    brevoForm?.addEventListener("submit", closeModal, { signal })
 
     document.addEventListener(
       "keydown",
