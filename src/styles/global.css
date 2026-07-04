@@ -362,6 +362,79 @@ h1, h2, h3, h4, .font-display {
   color: var(--color-cream);
 }
 
+.header-menu-button {
+  color: color-mix(in srgb, var(--color-cream) 92%, transparent);
+  border-color: color-mix(in srgb, var(--color-cream) 35%, transparent);
+}
+.header-menu-button:hover {
+  color: var(--color-cream);
+  border-color: color-mix(in srgb, var(--color-cream) 60%, transparent);
+}
+.header-menu-icon {
+  display: grid;
+  gap: 5px;
+}
+.header-menu-icon > span {
+  display: block;
+  width: 16px;
+  height: 1.6px;
+  background-color: currentColor;
+  transform-origin: center;
+  transition: transform 0.25s ease;
+}
+.header-menu-button.is-open .header-menu-icon > span:first-child {
+  transform: translateY(3.6px) rotate(45deg);
+}
+.header-menu-button.is-open .header-menu-icon > span:last-child {
+  transform: translateY(-3.6px) rotate(-45deg);
+}
+
+.mobile-menu-panel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  min-height: 100dvh;
+  padding-top: 5.2rem;
+  background-color: color-mix(in srgb, var(--color-cream) 96%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-wine) 18%, transparent);
+  box-shadow: 0 22px 42px -26px rgba(53, 8, 16, 0.5);
+  opacity: 0;
+  transform: translateY(-0.9rem);
+  pointer-events: none;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+.mobile-menu-panel.is-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+.mobile-menu-link {
+  color: color-mix(in srgb, var(--color-ink) 82%, transparent);
+}
+.mobile-menu-link:hover,
+.mobile-menu-link:focus-visible {
+  color: var(--color-wine);
+}
+.mobile-menu-cta {
+  color: var(--color-wine);
+  border-color: color-mix(in srgb, var(--color-wine) 30%, transparent);
+}
+.mobile-menu-lang.header-lang {
+  color: color-mix(in srgb, var(--color-ink) 60%, transparent);
+}
+
+.site-header.is-solid .header-menu-button,
+.site-header.is-scrolled .header-menu-button {
+  color: var(--color-wine);
+  border-color: color-mix(in srgb, var(--color-wine) 22%, transparent);
+}
+
+body.mobile-menu-open {
+  overflow: hidden;
+}
+
 /* =========================================================
    ACCESSIBILITÀ — riduci il movimento
    ========================================================= */

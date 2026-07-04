@@ -21,6 +21,12 @@ const nav = [
   { href: "/news", label: t["nav.blog"] },
   { href: "#recensioni", label: t["nav.reviews"] },
 ]
+
+const mobileMenuText = {
+  it: { open: "Apri menu", close: "Chiudi menu", nav: "Navigazione mobile" },
+  en: { open: "Open menu", close: "Close menu", nav: "Mobile navigation" },
+  de: { open: "Menu offnen", close: "Menu schliessen", nav: "Mobile Navigation" },
+}[lang]
 ---
 
 <header
@@ -31,7 +37,7 @@ const nav = [
   ]}
   data-lang={lang}
 >
-  <div class="mx-auto flex max-w-7xl items-center justify-between px-6 py-6 transition-[padding] duration-500 lg:px-10">
+  <div class="relative z-10 mx-auto flex max-w-7xl items-center justify-between px-6 py-6 transition-[padding] duration-500 lg:px-10">
     <!-- Logo -->
     <a href={homeHref} class="header-logo group flex flex-col leading-none">
       <span class="font-serif text-2xl tracking-[0.2em] uppercase">Villa Crine</span>
@@ -55,7 +61,23 @@ const nav = [
     </nav>
 
     <!-- CTA + lingua -->
-    <div class="flex items-center gap-5">
+    <div class="flex items-center gap-3 md:gap-5">
+      <button
+        id="mobile-menu-button"
+        type="button"
+        class="header-menu-button inline-flex h-10 w-10 items-center justify-center rounded-full border transition-colors lg:hidden"
+        aria-controls="mobile-menu-panel"
+        aria-expanded="false"
+      >
+        <span class="sr-only" data-menu-open-label={mobileMenuText.open} data-menu-close-label={mobileMenuText.close}>
+          {mobileMenuText.open}
+        </span>
+        <span class="header-menu-icon" aria-hidden="true">
+          <span></span>
+          <span></span>
+        </span>
+      </button>
+
       <div class="header-lang hidden items-center gap-2 text-xs tracking-widest md:flex">
         <a href="/" class:list={["transition-colors", lang === "it" ? "font-medium header-lang-active" : "header-link"]} aria-current={lang === "it" ? "page" : undefined}>IT</a>
         <span aria-hidden="true">·</span>
@@ -71,16 +93,119 @@ const nav = [
       </a>
     </div>
   </div>
+
+  <div id="mobile-menu-panel" class="mobile-menu-panel lg:hidden" hidden>
+    <nav class="mx-auto flex max-w-7xl flex-col gap-3 px-6 pt-6 pb-4" aria-label={mobileMenuText.nav}>
+      {
+        nav.map((item) => (
+          <a
+            href={localeHref(item.href)}
+            data-mobile-menu-close
+            class="mobile-menu-link rounded-md px-1 py-2 text-xl font-light tracking-wide"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </nav>
+
+    <div class="mx-auto flex max-w-7xl items-center justify-between gap-4 px-6 pt-2 pb-7">
+      <div class="mobile-menu-lang header-lang flex items-center gap-2 text-xs tracking-widest">
+        <a href="/" data-mobile-menu-close class:list={["transition-colors", lang === "it" ? "font-medium header-lang-active" : "header-link"]} aria-current={lang === "it" ? "page" : undefined}>IT</a>
+        <span aria-hidden="true">·</span>
+        <a href="/en" data-mobile-menu-close class:list={["transition-colors", lang === "en" ? "font-medium header-lang-active" : "header-link"]} aria-current={lang === "en" ? "page" : undefined}>EN</a>
+        <span aria-hidden="true">·</span>
+        <a href="/de" data-mobile-menu-close class:list={["transition-colors", lang === "de" ? "font-medium header-lang-active" : "header-link"]} aria-current={lang === "de" ? "page" : undefined}>DE</a>
+      </div>
+
+      <a
+        href={localeHref("#prenota")}
+        data-mobile-menu-close
+        class="header-cta mobile-menu-cta inline-block rounded-full border px-4 py-2 text-[0.68rem] font-medium tracking-widest uppercase transition-colors"
+      >
+        {t["nav.booking"]}
+      </a>
+    </div>
+  </div>
 </header>
 
 <script>
   const header = document.getElementById("site-header")
-  const onScroll = () => {
-    if (!header) return
-    if (window.scrollY > 40) header.classList.add("is-scrolled")
-    else header.classList.remove("is-scrolled")
+  if (header) {
+    const controller = new AbortController()
+    const { signal } = controller
+
+    const onScroll = () => {
+      if (window.scrollY > 40) header.classList.add("is-scrolled")
+      else header.classList.remove("is-scrolled")
+    }
+
+    const menuButton = header.querySelector("#mobile-menu-button")
+    const menuPanel = header.querySelector("#mobile-menu-panel")
+    const menuLabel = menuButton?.querySelector("[data-menu-open-label]")
+    let lastFocused: HTMLElement | null = null
+
+    const closeMenu = () => {
+      if (!(menuButton instanceof HTMLButtonElement) || !(menuPanel instanceof HTMLElement)) return
+      menuButton.setAttribute("aria-expanded", "false")
+      menuButton.classList.remove("is-open")
+      menuPanel.classList.remove("is-open")
+      document.body.classList.remove("mobile-menu-open")
+      if (menuLabel instanceof HTMLElement) {
+        const openText = menuLabel.dataset.menuOpenLabel
+        if (openText) menuLabel.textContent = openText
+      }
+      window.setTimeout(() => {
+        if (menuPanel.classList.contains("is-open")) return
+        menuPanel.hidden = true
+      }, 260)
+      if (lastFocused instanceof HTMLElement) lastFocused.focus()
+    }
+
+    const openMenu = () => {
+      if (!(menuButton instanceof HTMLButtonElement) || !(menuPanel instanceof HTMLElement)) return
+      lastFocused = document.activeElement instanceof HTMLElement ? document.activeElement : null
+      menuPanel.hidden = false
+      menuButton.setAttribute("aria-expanded", "true")
+      menuButton.classList.add("is-open")
+      requestAnimationFrame(() => {
+        menuPanel.classList.add("is-open")
+      })
+      document.body.classList.add("mobile-menu-open")
+      if (menuLabel instanceof HTMLElement) {
+        const closeText = menuLabel.dataset.menuCloseLabel
+        if (closeText) menuLabel.textContent = closeText
+      }
+      const firstLink = menuPanel.querySelector("a")
+      if (firstLink instanceof HTMLElement) firstLink.focus()
+    }
+
+    const toggleMenu = () => {
+      if (!(menuButton instanceof HTMLButtonElement)) return
+      if (menuButton.getAttribute("aria-expanded") === "true") closeMenu()
+      else openMenu()
+    }
+
+    menuButton?.addEventListener("click", toggleMenu, { signal })
+    header.querySelectorAll("[data-mobile-menu-close]").forEach((el) => {
+      el.addEventListener("click", closeMenu, { signal })
+    })
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape") closeMenu()
+      },
+      { signal },
+    )
+
+    window.addEventListener("scroll", onScroll, { passive: true, signal })
+    document.addEventListener("astro:after-swap", onScroll, { signal })
+    document.addEventListener("astro:before-swap", () => controller.abort(), {
+      once: true,
+      signal,
+    })
+
+    onScroll()
   }
-  onScroll()
-  window.addEventListener("scroll", onScroll, { passive: true })
-  document.addEventListener("astro:after-swap", onScroll)
 </script>
