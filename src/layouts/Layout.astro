@@ -2,7 +2,7 @@
 import "@/styles/global.css"
 import Header from "@/components/Header.astro"
 import Footer from "@/components/Footer.astro"
-import { defaultLang, type Lang } from "@/i18n/ui"
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
 
 interface Props {
   title: string
@@ -12,13 +12,20 @@ interface Props {
 }
 
 const {
-  title,
-  description = "Villa Crine — cantina artigianale nel cuore della Valpolicella. Vini autentici, tradizione di famiglia e olio extravergine d'oliva.",
+  title = ui[defaultLang]["site.title"],
+  description = ui[defaultLang]["site.description"],
   lang = defaultLang,
   image = "/images/hero-vigneti.png",
 } = Astro.props
 
 const canonical = new URL(Astro.url.pathname, Astro.site)
+const isLocaleHome = ["/en", "/de"].includes(Astro.url.pathname)
+const isHomePage = Astro.url.pathname === "/" || isLocaleHome
+const ogLocale = {
+  it: "it_IT",
+  en: "en_US",
+  de: "de_DE",
+}[lang]
 ---
 
 <!doctype html>
@@ -39,7 +46,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:image" content={new URL(image, Astro.site)} />
-    <meta property="og:locale" content={lang} />
+    <meta property="og:locale" content={ogLocale} />
     <meta name="twitter:card" content="summary_large_image" />
 
     <!-- Font: Cormorant Garamond (titoli) + Inter (testi) -->
@@ -51,11 +58,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site)
     />
   </head>
   <body class="min-h-screen bg-cream text-ink antialiased">
-    <Header lang={lang} />
+    <Header lang={lang} variant={isHomePage ? "overlay" : "solid"} />
     <main>
       <slot />
     </main>
-    <Footer />
+    <Footer lang={lang} />
 
     <script>
       // Scroll reveal: rivela gli elementi [data-reveal] quando entrano nel viewport

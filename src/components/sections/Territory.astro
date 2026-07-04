@@ -1,0 +1,44 @@
+---
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
+---
+
+<section id="territorio" class="bg-cream py-24 lg:py-32">
+  <div class="mx-auto grid max-w-7xl items-center gap-12 px-6 lg:grid-cols-2 lg:gap-20 lg:px-10">
+    <div class="order-2 lg:order-1" data-reveal="left">
+      <img
+        src="/images/hero-vigneti.png"
+        alt="Paesaggio della Valpolicella con vigneti e colline"
+        class="aspect-[4/5] w-full rounded-sm object-cover shadow-xl"
+        loading="lazy"
+      />
+    </div>
+
+    <div class="order-1 lg:order-2">
+      <p class="mb-4 flex items-center gap-3 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal="right">
+        <span class="rule-gold"></span>
+        {t["territory.kicker"]}
+      </p>
+      <h2 class="font-serif text-4xl text-balance text-wine lg:text-5xl" data-reveal="right" style="--reveal-delay:120ms">
+        {t["territory.title"]}
+      </h2>
+      <p class="mt-6 text-base font-light leading-relaxed text-pretty text-ink-soft" data-reveal="right" style="--reveal-delay:240ms">
+        {t["territory.body"]}
+      </p>
+      <a
+        href="#news"
+        data-reveal="right"
+        style="--reveal-delay:360ms"
+        class="btn-outline-fill mt-8 inline-block rounded-full border border-wine/30 px-7 py-3 text-sm font-medium tracking-widest text-wine uppercase hover:bg-wine hover:text-cream"
+      >
+        {t["territory.cta"]}
+      </a>
+    </div>
+  </div>
+</section>

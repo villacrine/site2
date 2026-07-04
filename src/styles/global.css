@@ -296,6 +296,43 @@ h1, h2, h3, h4, .font-display {
   box-shadow: 0 10px 30px -18px rgba(53, 8, 16, 0.35);
   border-bottom: 1px solid color-mix(in srgb, var(--color-wine) 12%, transparent);
 }
+.site-header.is-solid {
+  background-color: color-mix(in srgb, var(--color-cream) 92%, transparent);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px -18px rgba(53, 8, 16, 0.35);
+  border-bottom: 1px solid color-mix(in srgb, var(--color-wine) 12%, transparent);
+  transform: translateY(0);
+  opacity: 1;
+  animation: none;
+}
+.site-header.is-solid > div {
+  padding-top: 0.85rem;
+  padding-bottom: 0.85rem;
+}
+.site-header.is-solid .header-logo,
+.site-header.is-solid .header-lang-active {
+  color: var(--color-wine);
+}
+.site-header.is-solid .header-sub {
+  color: color-mix(in srgb, var(--color-gold) 100%, transparent);
+}
+.site-header.is-solid .header-link {
+  color: color-mix(in srgb, var(--color-ink) 75%, transparent);
+}
+.site-header.is-solid .header-link:hover {
+  color: var(--color-wine);
+}
+.site-header.is-solid .header-lang {
+  color: color-mix(in srgb, var(--color-ink) 55%, transparent);
+}
+.site-header.is-solid .header-cta {
+  color: var(--color-wine);
+  border-color: color-mix(in srgb, var(--color-wine) 28%, transparent);
+}
+.site-header.is-solid .header-cta:hover {
+  background-color: var(--color-wine);
+  color: var(--color-cream);
+}
 .site-header.is-scrolled > div {
   padding-top: 0.85rem;
   padding-bottom: 0.85rem;

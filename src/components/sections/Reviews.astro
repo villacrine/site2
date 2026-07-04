@@ -1,6 +1,12 @@
 ---
-import { ui, defaultLang } from "@/i18n/ui"
-const t = ui[defaultLang]
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
 
 // Placeholder — in produzione da Sanity
 const reviews = [
@@ -25,7 +31,7 @@ const reviews = [
 ]
 ---
 
-<section class="bg-wine py-24 text-cream lg:py-32">
+<section id="recensioni" class="bg-wine py-24 text-cream lg:py-32">
   <div class="mx-auto max-w-7xl px-6 lg:px-10">
     <div class="mb-16 text-center">
       <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold-soft uppercase" data-reveal>

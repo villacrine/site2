@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getNewsIndexPath, type LocalizedNewsArticle } from "@/lib/news"
+
+interface Props {
+  lang?: Lang
+  article: LocalizedNewsArticle
+}
+
+const { lang = defaultLang, article } = Astro.props
+const t = ui[lang]
+---
+
+<Layout title={`${article.localizedTitle} — ${t["site.title"]}`} description={article.localizedExcerpt} lang={lang} image={article.coverImage}>
+  <article class="bg-cream py-28 lg:py-32">
+    <div class="mx-auto max-w-4xl px-6 lg:px-10">
+      <a href={getNewsIndexPath(lang)} class="text-xs font-medium tracking-widest text-gold uppercase">
+        ← {t["news.kicker"]}
+      </a>
+
+      <p class="mt-8 text-xs font-medium tracking-[0.35em] text-gold uppercase" data-reveal>
+        {article.localizedCategory} · {article.dateLabel}
+      </p>
+      <h1 class="mt-4 font-serif text-5xl leading-tight text-balance text-wine lg:text-6xl" data-reveal style="--reveal-delay:100ms">
+        {article.localizedTitle}
+      </h1>
+      <p class="mt-6 max-w-3xl text-lg font-light leading-relaxed text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        {article.localizedExcerpt}
+      </p>
+
+      <div class="mt-12 overflow-hidden rounded-sm shadow-xl" data-reveal style="--reveal-delay:300ms">
+        <img src={article.coverImage} alt={article.localizedTitle} class="h-[24rem] w-full object-cover" />
+      </div>
+
+      <div class="prose prose-lg mt-12 max-w-none prose-p:font-light prose-p:leading-relaxed prose-p:text-ink-soft prose-headings:font-serif prose-headings:text-wine">
+        {
+          article.localizedBody.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))
+        }
+      </div>
+    </div>
+  </article>
+</Layout>

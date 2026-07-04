@@ -1,0 +1,46 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getLocalizedWines } from "@/lib/wines"
+import WineCard from "@/components/wines/WineCard.astro"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
+const wines = await getLocalizedWines(lang)
+---
+
+<Layout title={`${t["site.title"]} — ${t["wines.title"]}`} description={t["wines.subtitle"]} lang={lang}>
+  <section class="bg-cream py-28 lg:py-32">
+    <div class="mx-auto max-w-7xl px-6 lg:px-10">
+      <div class="mb-16 max-w-3xl">
+        <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
+          {t["wines.kicker"]}
+        </p>
+        <h1 class="font-serif text-5xl text-balance text-wine lg:text-6xl" data-reveal style="--reveal-delay:100ms">
+          {t["wines.title"]}
+        </h1>
+        <p class="mt-5 max-w-2xl text-base font-light leading-relaxed text-ink-soft" data-reveal style="--reveal-delay:200ms">
+          {t["wines.subtitle"]}
+        </p>
+      </div>
+
+      <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {
+          wines.length > 0 ? (
+            wines.map((wine, index) => (
+              <div data-reveal style={`--reveal-delay:${index * 120}ms`}>
+                <WineCard wine={wine} readMoreLabel={t["wines.discover"]} />
+              </div>
+            ))
+          ) : (
+            <p class="text-sm text-ink-soft">{t["wines.empty"]}</p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+</Layout>

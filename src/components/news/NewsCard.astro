@@ -1,0 +1,43 @@
+---
+import type { Lang } from "@/i18n/ui"
+import type { LocalizedNewsArticle } from "@/lib/news"
+
+interface Props {
+  article: LocalizedNewsArticle
+  lang: Lang
+  readMoreLabel: string
+}
+
+const { article, readMoreLabel } = Astro.props
+---
+
+<article class="card-lift overflow-hidden rounded-sm border border-wine/10 bg-cream shadow-sm transition-shadow duration-500 hover:shadow-xl">
+  <a href={article.href} class="group block h-full">
+    <div class="relative overflow-hidden">
+      <img
+        src={article.coverImage}
+        alt={article.localizedTitle}
+        class="aspect-[16/10] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+        loading="lazy"
+      />
+      <div class="absolute inset-0 bg-gradient-to-t from-wine-deep/50 via-transparent to-transparent" aria-hidden="true"></div>
+    </div>
+    <div class="flex h-full flex-col p-6">
+      <p class="text-[0.65rem] font-medium tracking-[0.35em] text-gold uppercase">
+        {article.localizedCategory} · {article.dateLabel}
+      </p>
+      <h3 class="mt-3 font-serif text-2xl leading-tight text-wine">
+        {article.localizedTitle}
+      </h3>
+      <p class="mt-4 flex-1 text-sm leading-relaxed text-ink-soft">
+        {article.localizedExcerpt}
+      </p>
+      <span class="mt-6 inline-flex items-center gap-2 text-xs font-medium tracking-widest text-wine uppercase">
+        {readMoreLabel}
+        <svg class="h-3 w-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" />
+        </svg>
+      </span>
+    </div>
+  </a>
+</article>

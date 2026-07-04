@@ -1,0 +1,15 @@
+---
+import NewsArticlePage from "@/components/news/NewsArticlePage.astro"
+import { getLocalizedNewsArticle, getNewsStaticPaths } from "@/lib/news"
+
+export const getStaticPaths = () => getNewsStaticPaths("en")
+
+const { slug } = Astro.params
+const article = getLocalizedNewsArticle("en", slug as string)
+
+if (!article) {
+  return Astro.redirect("/en/news")
+}
+---
+
+<NewsArticlePage lang="en" article={article} />

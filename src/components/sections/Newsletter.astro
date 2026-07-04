@@ -1,9 +1,15 @@
 ---
-import { ui, defaultLang } from "@/i18n/ui"
-const t = ui[defaultLang]
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
 ---
 
-<section class="bg-cream py-24 lg:py-32">
+<section id="prenota" class="bg-cream py-24 lg:py-32">
   <div class="mx-auto max-w-2xl px-6 text-center">
     <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
       {t["newsletter.kicker"]}

@@ -1,37 +1,17 @@
 ---
-import { ui, defaultLang } from "@/i18n/ui"
-const t = ui[defaultLang]
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getFeaturedWines, getWinesIndexPath } from "@/lib/wines"
 
-// Dati placeholder — in produzione verranno da Sanity (localizzati per campo)
-const wines = [
-  {
-    name: "Amarone della Valpolicella",
-    classification: "DOCG",
-    year: "2019",
-    note: "Riserva",
-    image: "/images/vino-amarone.png",
-    span: "lg:row-span-2",
-  },
-  {
-    name: "Valpolicella Ripasso",
-    classification: "DOC Superiore",
-    year: "2021",
-    note: "Elegante",
-    image: "/images/valpolicella-ripasso.jpg",
-    span: "",
-  },
-  {
-    name: "Recioto della Valpolicella",
-    classification: "DOCG",
-    year: "2020",
-    note: "Passito",
-    image: "/images/vino-amarone.png",
-    span: "",
-  },
-]
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props as Props
+const t = ui[lang]
+const wines = await getFeaturedWines(lang)
 ---
 
-<section class="bg-cream py-24 lg:py-32">
+<section id="vini" class="bg-cream py-24 lg:py-32">
   <div class="mx-auto max-w-7xl px-6 lg:px-10">
     <!-- Intestazione -->
     <div class="mb-16 max-w-2xl">
@@ -52,14 +32,14 @@ const wines = [
       {
         wines.map((wine, i) => (
           <a
-            href="/vini"
+            href={getWinesIndexPath(lang)}
             data-reveal="zoom"
             style={`--reveal-delay:${i * 140}ms`}
-            class={`group card-lift relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-sm bg-wine-deep ${wine.span}`}
+            class={`group card-lift relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-sm bg-wine-deep ${wine.featuredSpan}`}
           >
             <img
               src={wine.image}
-              alt={`Bottiglia di ${wine.name}`}
+              alt={`Bottiglia di ${wine.localizedName}`}
               class="absolute inset-0 h-full w-full object-cover opacity-80 transition-all duration-700 ease-out group-hover:scale-110 group-hover:opacity-100"
               loading="lazy"
             />
@@ -69,10 +49,10 @@ const wines = [
             />
             <div class="relative z-10 p-6 text-cream transition-transform duration-500 group-hover:-translate-y-1">
               <span class="text-[0.65rem] font-medium tracking-[0.3em] text-gold-soft uppercase">
-                {wine.classification} · {wine.year}
+                {wine.localizedClassification} · {wine.year}
               </span>
-              <h3 class="mt-2 font-serif text-2xl leading-tight">{wine.name}</h3>
-              <span class="mt-1 block text-sm font-light text-cream/70">{wine.note}</span>
+              <h3 class="mt-2 font-serif text-2xl leading-tight">{wine.localizedName}</h3>
+              <span class="mt-1 block text-sm font-light text-cream/70">{wine.localizedNote}</span>
               <span class="mt-4 flex items-center gap-2 text-[0.7rem] font-medium tracking-widest text-gold-soft uppercase opacity-0 transition-all duration-500 group-hover:opacity-100">
                 {t["wines.discover"]}
                 <svg class="h-3.5 w-3.5 -translate-x-1 transition-transform duration-500 group-hover:translate-x-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -87,7 +67,7 @@ const wines = [
 
     <div class="mt-14 text-center" data-reveal>
       <a
-        href="/vini"
+        href={getWinesIndexPath(lang)}
         class="link-underline text-sm font-medium tracking-widest text-wine uppercase"
       >
         {t["wines.cta"]}

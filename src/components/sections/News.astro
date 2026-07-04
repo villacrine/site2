@@ -1,0 +1,53 @@
+---
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getLocalizedNewsArticles, getNewsIndexPath } from "@/lib/news"
+import NewsCard from "@/components/news/NewsCard.astro"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
+const articles = getLocalizedNewsArticles(lang).slice(0, 3)
+---
+
+<section id="news" class="bg-sand py-24 lg:py-32">
+  <div class="mx-auto max-w-7xl px-6 lg:px-10">
+    <div class="mb-16 max-w-2xl">
+      <p class="mb-4 flex items-center gap-3 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
+        <span class="rule-gold"></span>
+        {t["news.kicker"]}
+      </p>
+      <h2 class="font-serif text-4xl text-balance text-wine lg:text-5xl" data-reveal style="--reveal-delay:100ms">
+        {t["news.title"]}
+      </h2>
+      <p class="mt-5 text-base font-light leading-relaxed text-pretty text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        {t["news.body"]}
+      </p>
+    </div>
+
+    <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+      {
+        articles.length > 0 ? (
+          articles.map((article, index) => (
+            <div data-reveal style={`--reveal-delay:${index * 140}ms`}>
+              <NewsCard article={article} lang={lang} readMoreLabel={t["news.readMore"]} />
+            </div>
+          ))
+        ) : (
+          <p class="text-sm text-ink-soft">{t["news.empty"]}</p>
+        )
+      }
+    </div>
+
+    <div class="mt-14 text-center" data-reveal>
+      <a
+        href={getNewsIndexPath(lang)}
+        class="link-underline text-sm font-medium tracking-widest text-wine uppercase"
+      >
+        {t["news.cta"]}
+      </a>
+    </div>
+  </div>
+</section>

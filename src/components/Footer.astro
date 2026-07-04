@@ -1,14 +1,25 @@
 ---
-import { ui, defaultLang } from "@/i18n/ui"
-const t = ui[defaultLang]
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
 const year = new Date().getFullYear()
+const localeHref = (href: string) => {
+  if (href.startsWith("#")) return `${lang === defaultLang ? "/" : `/${lang}`}${href}`
+  if (href === "/") return lang === defaultLang ? "/" : `/${lang}`
+  return lang === defaultLang ? href : `/${lang}${href}`
+}
 
 const nav = [
-  { href: "/vini", label: t["nav.wines"] },
-  { href: "/chi-siamo", label: t["nav.about"] },
-  { href: "/territorio", label: t["nav.territory"] },
+  { href: "#vini", label: t["nav.wines"] },
+  { href: "#chi-siamo", label: t["nav.about"] },
+  { href: "#territorio", label: t["nav.territory"] },
   { href: "/news", label: t["nav.blog"] },
-  { href: "/prenota", label: t["nav.booking"] },
+  { href: "#prenota", label: t["nav.booking"] },
 ]
 ---
 
@@ -27,7 +38,7 @@ const nav = [
       {
         nav.map((item) => (
           <a
-            href={item.href}
+            href={localeHref(item.href)}
             class="link-underline w-fit text-sm font-light text-cream/80 transition-colors hover:text-cream"
           >
             {item.label}
@@ -38,7 +49,7 @@ const nav = [
 
     <!-- Legale + social -->
     <div class="flex flex-col gap-4">
-      <a href="/privacy" class="link-underline w-fit text-sm font-light hover:text-cream">
+      <a href={localeHref("/privacy")} class="link-underline w-fit text-sm font-light hover:text-cream">
         {t["footer.privacy"]}
       </a>
       <div class="mt-2 flex items-center gap-4">

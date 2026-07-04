@@ -1,9 +1,15 @@
 ---
-import { ui, defaultLang } from "@/i18n/ui"
-const t = ui[defaultLang]
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
 ---
 
-<section class="relative flex min-h-screen items-center justify-center overflow-hidden">
+<section id="home" class="relative flex min-h-screen items-center justify-center overflow-hidden">
   <!-- Immagine a tutto schermo con effetto Ken Burns -->
   <img
     src="/images/hero-vigneti.png"
@@ -48,13 +54,13 @@ const t = ui[defaultLang]
       class="mt-10 flex animate-[fade-in_1.1s_ease_forwards] flex-col items-center justify-center gap-4 opacity-0 [animation-delay:1000ms] sm:flex-row"
     >
       <a
-        href="/vini"
+        href="#vini"
         class="btn-shimmer w-full rounded-full bg-gold px-8 py-3 text-sm font-medium tracking-widest text-wine-deep uppercase hover:bg-red-soft sm:w-auto"
       >
         {t["hero.cta.wines"]}
       </a>
       <a
-        href="/prenota"
+        href="#prenota"
         class="btn-outline-fill w-full rounded-full border border-cream/50 px-8 py-3 text-sm font-medium tracking-widest text-cream uppercase hover:bg-cream hover:text-wine-deep sm:w-auto"
       >
         {t["hero.cta.booking"]}

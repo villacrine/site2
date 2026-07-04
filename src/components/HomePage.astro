@@ -1,0 +1,31 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import Hero from "@/components/sections/Hero.astro"
+import FeaturedWines from "@/components/sections/FeaturedWines.astro"
+import Story from "@/components/sections/Story.astro"
+import Territory from "@/components/sections/Territory.astro"
+import Reviews from "@/components/sections/Reviews.astro"
+import News from "@/components/sections/News.astro"
+import Newsletter from "@/components/sections/Newsletter.astro"
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+  title?: string
+  description?: string
+}
+
+const { lang = defaultLang } = Astro.props
+const title = Astro.props.title ?? ui[lang]["site.title"]
+const description = Astro.props.description ?? ui[lang]["site.description"]
+---
+
+<Layout title={title} description={description} lang={lang}>
+  <Hero lang={lang} />
+  <FeaturedWines lang={lang} />
+  <Story lang={lang} />
+  <Territory lang={lang} />
+  <Reviews lang={lang} />
+  <News lang={lang} />
+  <Newsletter lang={lang} />
+</Layout>

@@ -1,0 +1,27 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { ui, defaultLang, type Lang } from "@/i18n/ui"
+
+interface Props {
+  lang?: Lang
+}
+
+const { lang = defaultLang } = Astro.props
+const t = ui[lang]
+---
+
+<Layout title={`${t["site.title"]} — ${t["privacy.title"]}`} description={t["privacy.body"]} lang={lang}>
+  <section class="bg-cream py-28 lg:py-32">
+    <div class="mx-auto max-w-3xl px-6 lg:px-10">
+      <p class="mb-4 text-xs font-medium tracking-[0.4em] text-gold uppercase" data-reveal>
+        {t["privacy.title"]}
+      </p>
+      <h1 class="font-serif text-5xl text-balance text-wine lg:text-6xl" data-reveal style="--reveal-delay:100ms">
+        {t["privacy.title"]}
+      </h1>
+      <p class="mt-6 text-base font-light leading-relaxed text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        {t["privacy.body"]}
+      </p>
+    </div>
+  </section>
+</Layout>
