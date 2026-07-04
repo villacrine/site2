@@ -6,7 +6,7 @@ import { getLocalizedNewsArticle, getNewsStaticPaths } from "@/lib/news"
 export const getStaticPaths = () => getNewsStaticPaths(defaultLang)
 
 const { slug } = Astro.params
-const article = getLocalizedNewsArticle(defaultLang, slug as string)
+const article = await getLocalizedNewsArticle(defaultLang, slug as string)
 
 if (!article) {
   return Astro.redirect("/news")

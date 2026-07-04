@@ -1,5 +1,5 @@
 ---
-import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
 import { getFeaturedWines, getWinesIndexPath } from "@/lib/wines"
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props as Props
-const t = ui[lang]
+const t = await getUi(lang)
 const wines = await getFeaturedWines(lang)
 ---
 
@@ -32,7 +32,7 @@ const wines = await getFeaturedWines(lang)
       {
         wines.map((wine, i) => (
           <a
-            href={getWinesIndexPath(lang)}
+            href={wine.href}
             data-reveal="zoom"
             style={`--reveal-delay:${i * 140}ms`}
             class={`group card-lift relative flex min-h-[22rem] flex-col justify-end overflow-hidden rounded-sm bg-wine-deep ${wine.featuredSpan}`}

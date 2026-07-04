@@ -7,7 +7,7 @@ import Territory from "@/components/sections/Territory.astro"
 import Reviews from "@/components/sections/Reviews.astro"
 import News from "@/components/sections/News.astro"
 import Newsletter from "@/components/sections/Newsletter.astro"
-import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
 
 interface Props {
   lang?: Lang
@@ -16,8 +16,9 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props
-const title = Astro.props.title ?? ui[lang]["site.title"]
-const description = Astro.props.description ?? ui[lang]["site.description"]
+const t = await getUi(lang)
+const title = Astro.props.title ?? t["site.title"]
+const description = Astro.props.description ?? t["site.description"]
 ---
 
 <Layout title={title} description={description} lang={lang}>

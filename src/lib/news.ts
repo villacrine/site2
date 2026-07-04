@@ -1,4 +1,5 @@
 import type { Lang } from "@/i18n/ui"
+import { querySanity } from "@/lib/sanity"
 
 export type NewsArticle = {
   slug: Record<Lang, string>
@@ -19,6 +20,20 @@ export type LocalizedNewsArticle = NewsArticle & {
   localizedCategory: string
   href: string
   dateLabel: string
+}
+
+type SanityLocalizedSlug = Record<Lang, { current: string }>
+type SanityLocalizedText = Record<Lang, string>
+
+type SanityNewsArticle = {
+  slug: SanityLocalizedSlug
+  title: SanityLocalizedText
+  excerpt: SanityLocalizedText
+  body: SanityLocalizedText
+  category: SanityLocalizedText
+  publishedAt: string
+  coverImage: string
+  readingTime: number
 }
 
 export const newsArticles: NewsArticle[] = [
@@ -159,8 +174,14 @@ const formatDate = (date: string, lang: Lang) =>
     year: "numeric",
   }).format(new Date(date))
 
-export function getLocalizedNewsArticles(lang: Lang): LocalizedNewsArticle[] {
-  return newsArticles
+const splitParagraphs = (value: string) =>
+  value
+    .split(/\n\s*\n/g)
+    .map((chunk) => chunk.trim())
+    .filter(Boolean)
+
+const mapFallbackNews = (lang: Lang): LocalizedNewsArticle[] =>
+  newsArticles
     .slice()
     .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt))
     .map((article) => ({
@@ -173,27 +194,73 @@ export function getLocalizedNewsArticles(lang: Lang): LocalizedNewsArticle[] {
       href: `${localeBasePath(lang)}/${article.slug[lang]}`,
       dateLabel: formatDate(article.publishedAt, lang),
     }))
+
+const mapSanityNews = (lang: Lang, source: SanityNewsArticle[]): LocalizedNewsArticle[] =>
+  source
+    .slice()
+    .sort((left, right) => right.publishedAt.localeCompare(left.publishedAt))
+    .map((article) => {
+      const slugMap = {
+        it: article.slug.it.current,
+        en: article.slug.en.current,
+        de: article.slug.de.current,
+      }
+
+      return {
+        slug: slugMap,
+        title: article.title,
+        excerpt: article.excerpt,
+        body: {
+          it: splitParagraphs(article.body.it),
+          en: splitParagraphs(article.body.en),
+          de: splitParagraphs(article.body.de),
+        },
+        category: article.category,
+        publishedAt: article.publishedAt,
+        coverImage: article.coverImage,
+        readingTime: article.readingTime,
+        localizedSlug: slugMap[lang],
+        localizedTitle: article.title[lang],
+        localizedExcerpt: article.excerpt[lang],
+        localizedBody: splitParagraphs(article.body[lang]),
+        localizedCategory: article.category[lang],
+        href: `${localeBasePath(lang)}/${slugMap[lang]}`,
+        dateLabel: formatDate(article.publishedAt, lang),
+      }
+    })
+
+async function getSanityNews(lang: Lang): Promise<LocalizedNewsArticle[] | null> {
+  const articles = await querySanity<SanityNewsArticle>(
+    `*[_type == "newsArticle" && defined(slug.${lang}.current)]{
+      slug,
+      title,
+      excerpt,
+      body,
+      category,
+      publishedAt,
+      "coverImage": coalesce(coverImage.asset->url, coverImage),
+      readingTime
+    }|order(publishedAt desc)`,
+  )
+
+  if (!articles || articles.length === 0) return null
+  return mapSanityNews(lang, articles)
 }
 
-export function getLocalizedNewsArticle(lang: Lang, slug: string): LocalizedNewsArticle | undefined {
-  const article = newsArticles.find((entry) => entry.slug[lang] === slug)
-  if (!article) return undefined
-
-  return {
-    ...article,
-    localizedSlug: article.slug[lang],
-    localizedTitle: article.title[lang],
-    localizedExcerpt: article.excerpt[lang],
-    localizedBody: article.body[lang],
-    localizedCategory: article.category[lang],
-    href: `${localeBasePath(lang)}/${article.slug[lang]}`,
-    dateLabel: formatDate(article.publishedAt, lang),
-  }
+export async function getLocalizedNewsArticles(lang: Lang): Promise<LocalizedNewsArticle[]> {
+  const fromSanity = await getSanityNews(lang)
+  return fromSanity ?? mapFallbackNews(lang)
 }
 
-export function getNewsStaticPaths(lang: Lang) {
-  return newsArticles.map((article) => ({
-    params: { slug: article.slug[lang] },
+export async function getLocalizedNewsArticle(lang: Lang, slug: string): Promise<LocalizedNewsArticle | undefined> {
+  const articles = await getLocalizedNewsArticles(lang)
+  return articles.find((entry) => entry.localizedSlug === slug)
+}
+
+export async function getNewsStaticPaths(lang: Lang) {
+  const articles = await getLocalizedNewsArticles(lang)
+  return articles.map((article) => ({
+    params: { slug: article.localizedSlug },
     props: { lang },
   }))
 }

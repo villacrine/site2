@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro"
-import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
 import { getNewsIndexPath, type LocalizedNewsArticle } from "@/lib/news"
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { lang = defaultLang, article } = Astro.props
-const t = ui[lang]
+const t = await getUi(lang)
 ---
 
 <Layout title={`${article.localizedTitle} — ${t["site.title"]}`} description={article.localizedExcerpt} lang={lang} image={article.coverImage}>

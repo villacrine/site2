@@ -1,3 +1,5 @@
+import { querySanityFirst } from "@/lib/sanity"
+
 export const languages = {
   it: "Italiano",
   en: "English",
@@ -165,3 +167,47 @@ export const ui = {
     "footer.rights": "Alle Rechte vorbehalten.",
   },
 } as const
+
+export type UiKey = keyof (typeof ui)[typeof defaultLang]
+export type UiMessages = Record<UiKey, string>
+
+type UiTranslationEntry = {
+  key: UiKey
+  it: string
+  en: string
+  de: string
+}
+
+type SanityUiTranslations = {
+  entries: UiTranslationEntry[]
+}
+
+const uiCache: Partial<Record<Lang, UiMessages>> = {}
+
+export async function getUi(lang: Lang): Promise<UiMessages> {
+  if (uiCache[lang]) return uiCache[lang] as UiMessages
+
+  const sanityDoc = await querySanityFirst<SanityUiTranslations>(
+    `*[_type == "uiTranslations"][0]{ entries[] { key, it, en, de } }`,
+  )
+
+  if (!sanityDoc || !Array.isArray(sanityDoc.entries)) {
+    const fallback = ui[lang] as unknown as UiMessages
+    uiCache[lang] = fallback
+    return fallback
+  }
+
+  const overrides = sanityDoc.entries.reduce<Record<string, string>>((acc, entry) => {
+    if (!entry.key) return acc
+    acc[String(entry.key)] = entry[lang]
+    return acc
+  }, {})
+
+  const merged = {
+    ...(ui[lang] as unknown as UiMessages),
+    ...overrides,
+  } as UiMessages
+
+  uiCache[lang] = merged
+  return merged
+}

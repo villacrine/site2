@@ -1,6 +1,6 @@
 ---
 import Layout from "@/layouts/Layout.astro"
-import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
 import { getLocalizedWines } from "@/lib/wines"
 import WineCard from "@/components/wines/WineCard.astro"
 
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const { lang = defaultLang } = Astro.props
-const t = ui[lang]
+const t = await getUi(lang)
 const wines = await getLocalizedWines(lang)
 ---
 

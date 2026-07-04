@@ -1,0 +1,45 @@
+---
+import Layout from "@/layouts/Layout.astro"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
+import { getWinesIndexPath, type LocalizedWine } from "@/lib/wines"
+
+interface Props {
+  lang?: Lang
+  wine: LocalizedWine
+}
+
+const { lang = defaultLang, wine } = Astro.props
+const t = await getUi(lang)
+---
+
+<Layout title={`${wine.localizedName} — ${t["site.title"]}`} description={wine.localizedNote} lang={lang} image={wine.image}>
+  <article class="bg-cream py-28 lg:py-32">
+    <div class="mx-auto max-w-4xl px-6 lg:px-10">
+      <a href={getWinesIndexPath(lang)} class="text-xs font-medium tracking-widest text-gold uppercase">
+        ← {t["wines.kicker"]}
+      </a>
+
+      <p class="mt-8 text-xs font-medium tracking-[0.35em] text-gold uppercase" data-reveal>
+        {wine.localizedClassification} · {wine.year}
+      </p>
+      <h1 class="mt-4 font-serif text-5xl leading-tight text-balance text-wine lg:text-6xl" data-reveal style="--reveal-delay:100ms">
+        {wine.localizedName}
+      </h1>
+      <p class="mt-6 max-w-3xl text-lg font-light leading-relaxed text-ink-soft" data-reveal style="--reveal-delay:200ms">
+        {wine.localizedNote}
+      </p>
+
+      <div class="mt-12 overflow-hidden rounded-sm shadow-xl" data-reveal style="--reveal-delay:300ms">
+        <img src={wine.image} alt={wine.localizedName} class="h-[24rem] w-full object-cover" />
+      </div>
+
+      <div class="prose prose-lg mt-12 max-w-none prose-p:font-light prose-p:leading-relaxed prose-p:text-ink-soft prose-headings:font-serif prose-headings:text-wine">
+        {
+          wine.localizedDescription.map((paragraph) => (
+            <p>{paragraph}</p>
+          ))
+        }
+      </div>
+    </div>
+  </article>
+</Layout>

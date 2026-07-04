@@ -1,0 +1,16 @@
+---
+import WineArticlePage from "@/components/wines/WineArticlePage.astro"
+import { defaultLang } from "@/i18n/ui"
+import { getLocalizedWine, getWineStaticPaths } from "@/lib/wines"
+
+export const getStaticPaths = () => getWineStaticPaths(defaultLang)
+
+const { slug } = Astro.params
+const wine = await getLocalizedWine(defaultLang, slug as string)
+
+if (!wine) {
+  return Astro.redirect("/wines")
+}
+---
+
+<WineArticlePage lang="it" wine={wine} />

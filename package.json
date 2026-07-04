@@ -8,14 +8,29 @@
     "start": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "sanity": "sanity",
+    "sanity:dev": "sanity dev --host 0.0.0.0 --port 3333",
+    "sanity:build": "sanity build",
+    "sanity:deploy": "sanity deploy",
+    "sanity:seed": "tsx scripts/seed-sanity.ts"
   },
   "dependencies": {
+    "@sanity/client": "^7.23.0",
+    "@sanity/vision": "^6.3.0",
     "@tailwindcss/vite": "^4.3.2",
     "astro": "^7.0.5",
+    "sanity": "^6.3.0",
+    "styled-components": "^6.4.3",
     "tailwindcss": "^4.3.2"
   },
   "pnpm": {
-    "onlyBuiltDependencies": ["esbuild", "sharp"]
+    "onlyBuiltDependencies": [
+      "esbuild",
+      "sharp"
+    ]
+  },
+  "devDependencies": {
+    "tsx": "^4.23.0"
   }
 }

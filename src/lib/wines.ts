@@ -1,5 +1,5 @@
 import type { Lang } from "@/i18n/ui"
-import { querySanity } from "@/lib/sanity"
+import { isSanityConfigured, querySanity } from "@/lib/sanity"
 
 export type Wine = {
   slug: Record<Lang, string>
@@ -22,7 +22,22 @@ export type LocalizedWine = Wine & {
   href: string
 }
 
-const wines: Wine[] = [
+type SanityLocalizedSlug = Record<Lang, { current: string }>
+type SanityLocalizedText = Record<Lang, string>
+
+type SanityWine = {
+  slug: SanityLocalizedSlug
+  name: SanityLocalizedText
+  classification: SanityLocalizedText
+  note: SanityLocalizedText
+  description: SanityLocalizedText
+  year: string
+  image: string
+  featuredSpan: string
+  featured: boolean
+}
+
+export const fallbackWines: Wine[] = [
   {
     slug: {
       it: "amarone-della-valpolicella",
@@ -129,6 +144,12 @@ const wines: Wine[] = [
 
 const localeBasePath = (lang: Lang) => (lang === "it" ? "/wines" : `/${lang}/wines`)
 
+const splitParagraphs = (value: string) =>
+  value
+    .split(/\n\s*\n/g)
+    .map((chunk) => chunk.trim())
+    .filter(Boolean)
+
 const mapLocalizedWines = (lang: Lang, source: Wine[]): LocalizedWine[] =>
   source.map((wine) => ({
     ...wine,
@@ -140,9 +161,40 @@ const mapLocalizedWines = (lang: Lang, source: Wine[]): LocalizedWine[] =>
     href: `${localeBasePath(lang)}/${wine.slug[lang]}`,
   }))
 
+const mapSanityWines = (lang: Lang, source: SanityWine[]): LocalizedWine[] =>
+  source.map((wine) => {
+    const slugMap = {
+      it: wine.slug.it.current,
+      en: wine.slug.en.current,
+      de: wine.slug.de.current,
+    }
+
+    return {
+      slug: slugMap,
+      name: wine.name,
+      classification: wine.classification,
+      note: wine.note,
+      description: {
+        it: splitParagraphs(wine.description.it),
+        en: splitParagraphs(wine.description.en),
+        de: splitParagraphs(wine.description.de),
+      },
+      year: wine.year,
+      image: wine.image,
+      featuredSpan: wine.featuredSpan,
+      featured: wine.featured,
+      localizedSlug: slugMap[lang],
+      localizedName: wine.name[lang],
+      localizedClassification: wine.classification[lang],
+      localizedNote: wine.note[lang],
+      localizedDescription: splitParagraphs(wine.description[lang]),
+      href: `${localeBasePath(lang)}/${slugMap[lang]}`,
+    }
+  })
+
 async function getSanityWines(lang: Lang): Promise<LocalizedWine[] | null> {
-  const winesFromSanity = await querySanity<Wine>(
-    `*[_type == "wine" && defined(slug.${lang})]{
+  const winesFromSanity = await querySanity<SanityWine>(
+    `*[_type == "wine" && defined(slug.${lang}.current)]{
       slug,
       name,
       classification,
@@ -155,18 +207,38 @@ async function getSanityWines(lang: Lang): Promise<LocalizedWine[] | null> {
     }|order(featured desc, year desc)`,
   )
 
-  if (!winesFromSanity || winesFromSanity.length === 0) return null
-  return mapLocalizedWines(lang, winesFromSanity)
+  if (!winesFromSanity) return null
+  return mapSanityWines(lang, winesFromSanity)
 }
 
 export async function getLocalizedWines(lang: Lang): Promise<LocalizedWine[]> {
   const winesFromSanity = await getSanityWines(lang)
-  return winesFromSanity ?? mapLocalizedWines(lang, wines)
+  if (winesFromSanity) return winesFromSanity
+
+  if (isSanityConfigured()) {
+    console.warn("[wines] Sanity is configured but wines could not be fetched. Returning an empty list.")
+    return []
+  }
+
+  return mapLocalizedWines(lang, fallbackWines)
 }
 
 export async function getFeaturedWines(lang: Lang): Promise<LocalizedWine[]> {
   const allWines = await getLocalizedWines(lang)
   return allWines.filter((wine) => wine.featured).slice(0, 3)
+}
+
+export async function getLocalizedWine(lang: Lang, slug: string): Promise<LocalizedWine | undefined> {
+  const wines = await getLocalizedWines(lang)
+  return wines.find((wine) => wine.localizedSlug === slug)
+}
+
+export async function getWineStaticPaths(lang: Lang) {
+  const wines = await getLocalizedWines(lang)
+  return wines.map((wine) => ({
+    params: { slug: wine.localizedSlug },
+    props: { lang },
+  }))
 }
 
 export function getWinesIndexPath(lang: Lang) {

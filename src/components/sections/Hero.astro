@@ -1,12 +1,12 @@
 ---
-import { ui, defaultLang, type Lang } from "@/i18n/ui"
+import { getUi, defaultLang, type Lang } from "@/i18n/ui"
 
 interface Props {
   lang?: Lang
 }
 
 const { lang = defaultLang } = Astro.props
-const t = ui[lang]
+const t = await getUi(lang)
 ---
 
 <section id="home" class="relative flex min-h-screen items-center justify-center overflow-hidden">
