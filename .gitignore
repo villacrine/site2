@@ -11,5 +11,6 @@ __v0_jsx-dev-runtime.ts
 
 # Common ignores
 node_modules
+.sanity-static
 .next/
 .DS_Store
